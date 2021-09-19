@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  NotesListVC.swift
 //  LoopNote
 //
 //  Created by Alexander Kovzhut on 19.09.2021.
@@ -7,13 +7,14 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class NotesListVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+
+        self.view.backgroundColor = UIColor.black
     }
+    
 
 
 }
-
