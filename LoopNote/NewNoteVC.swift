@@ -5,17 +5,18 @@
 //  Created by Alexander Kovzhut on 20.09.2021.
 //
 
+import CoreData
 import UIKit
 
 final class NewNoteVC: UIViewController {
     
+    private let viewContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     private lazy var noteTextField: UITextField = {
         let textField = UITextField()
-        
         textField.placeholder = "New note"
         textField.textColor = UIColor.systemOrange
         textField.borderStyle = .roundedRect
-        
         return textField
     }()
     
@@ -59,32 +60,45 @@ final class NewNoteVC: UIViewController {
     
     private func setConstraints() {
         noteTextField.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
-            noteTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            saveButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
-            noteTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            noteTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0)
+            noteTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            noteTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            noteTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         ])
-        
+
         saveButton.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
-            saveButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -120),
-            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 90),
-            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -90)
+            saveButton.topAnchor.constraint(equalTo: noteTextField.bottomAnchor, constant: 20),
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         ])
-        
+
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        
+
         NSLayoutConstraint.activate([
-            cancelButton.bottomAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 50),
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 90),
-            cancelButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -90)
+            cancelButton.topAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 20),
+            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
+            cancelButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
         ])
     }
     
     @objc private func save() {
+        guard let text = noteTextField.text else { return }
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: "Task", in: viewContext) else { return }
+        guard let note = NSManagedObject(entity: entityDescription, insertInto: viewContext) as? Task else { return }
+
+        note.title = text
+        
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch let error {
+                print(error)
+            }
+        }
+        
         dismiss(animated: true)
     }
     
